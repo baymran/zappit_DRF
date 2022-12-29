@@ -5,10 +5,15 @@ from .models import Post, Vote
 class PostSerializer(serializers.ModelSerializer):
     poster = serializers.ReadOnlyField(source='poster.username')
     poster_id = serializers.ReadOnlyField(source='poster.id')
+    votes = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'url', 'poster', 'poster_id', 'created']
+        fields = ['id', 'title', 'url', 'poster', 'poster_id', 'created', 'votes']
+
+    @staticmethod
+    def get_votes(post):
+        return Vote.objects.filter(post=post).count()
 
 
 class VoteSerializer(serializers.ModelSerializer):
@@ -16,7 +21,5 @@ class VoteSerializer(serializers.ModelSerializer):
         model = Vote
         fields = ['id']
 
-    # title = models.CharField(max_length=100)
-    # url = models.URLField()
-    # poster = models.ForeignKey(User, on_delete=models.CASCADE)
-    # created = models.DateTimeField(auto_now_add=True)
+
+
